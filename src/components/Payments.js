@@ -193,3 +193,167 @@ const Payments = () => {
       </Grid>
 
       {/* Filters */}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <TextField
+          placeholder="Search payments..."
+          variant="outlined"
+          size="small"
+          value={searchTerm}
+          onChange={handleSearch}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+          sx={{ width: '40%' }}
+        />
+        <FormControl size="small" sx={{ width: '20%' }}>
+          <InputLabel>Payment Period</InputLabel>
+          <Select
+            value={paymentPeriod}
+            label="Payment Period"
+            onChange={handlePeriodChange}
+          >
+            <MenuItem value="all">All Payments</MenuItem>
+            <MenuItem value="current">Current Month</MenuItem>
+            <MenuItem value="pending">Pending</MenuItem>
+            <MenuItem value="overdue">Overdue</MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
+
+      {/* Payments Table */}
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Payment ID</TableCell>
+              <TableCell>Tenant</TableCell>
+              <TableCell>Property</TableCell>
+              <TableCell>Amount</TableCell>
+              <TableCell>Date</TableCell>
+              <TableCell>Method</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filteredPayments.map((payment) => (
+              <TableRow key={payment.id}>
+                <TableCell>{payment.id}</TableCell>
+                <TableCell>{payment.tenant}</TableCell>
+                <TableCell>{payment.property}</TableCell>
+                <TableCell>${payment.amount.toFixed(2)}</TableCell>
+                <TableCell>{new Date(payment.date).toLocaleDateString()}</TableCell>
+                <TableCell>{payment.method}</TableCell>
+                <TableCell>
+                  <Chip
+                    label={payment.status}
+                    color={
+                      payment.status === 'Completed' ? 'success' :
+                      payment.status === 'Pending' ? 'info' : 'error'
+                    }
+                    size="small"
+                  />
+                </TableCell>
+                <TableCell>
+                  <IconButton size="small" title="View Details">
+                    <VisibilityIcon fontSize="small" />
+                  </IconButton>
+                  <IconButton size="small" title="Print Receipt">
+                    <PrintIcon fontSize="small" />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      {/* Record Payment Dialog */}
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>Record New Payment</DialogTitle>
+        <DialogContent>
+          <DialogContentText sx={{ mb: 2 }}>
+            Enter the payment details below.
+          </DialogContentText>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <InputLabel>Tenant</InputLabel>
+                <Select label="Tenant">
+                  <MenuItem value="John Doe">John Doe</MenuItem>
+                  <MenuItem value="Jane Smith">Jane Smith</MenuItem>
+                  <MenuItem value="Robert Johnson">Robert Johnson</MenuItem>
+                  <MenuItem value="Emily Davis">Emily Davis</MenuItem>
+                  <MenuItem value="Michael Wilson">Michael Wilson</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <InputLabel>Property</InputLabel>
+                <Select label="Property">
+                  <MenuItem value="121 Main Street, Apt 2B">121 Main Street, Apt 2B</MenuItem>
+                  <MenuItem value="456 Oak Avenue">456 Oak Avenue</MenuItem>
+                  <MenuItem value="789 Pine Street, Unit 3">789 Pine Street, Unit 3</MenuItem>
+                  <MenuItem value="101 Elm Court, Apt 5C">101 Elm Court, Apt 5C</MenuItem>
+                  <MenuItem value="202 Maple Drive">202 Maple Drive</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                label="Amount"
+                fullWidth
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">$</InputAdornment>
+                  ),
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                label="Date"
+                type="date"
+                fullWidth
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                defaultValue={new Date().toISOString().split('T')[0]}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <InputLabel>Payment Method</InputLabel>
+                <Select label="Payment Method">
+                  <MenuItem value="Credit Card">Credit Card</MenuItem>
+                  <MenuItem value="Bank Transfer">Bank Transfer</MenuItem>
+                  <MenuItem value="Cash">Cash</MenuItem>
+                  <MenuItem value="Check">Check</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Notes"
+                multiline
+                rows={3}
+                fullWidth
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Cancel</Button>
+          <Button variant="contained" onClick={handleCloseDialog}>Record Payment</Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
+  );
+};
+
+export default Payments;
